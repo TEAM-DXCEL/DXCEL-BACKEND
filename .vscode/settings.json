@@ -1,0 +1,15 @@
+{
+  "deno.enablePaths": ["./supabase/functions", "./supabase/tests/functions"],
+  "deno.path": "./node_modules/.bin/deno",
+  "deno.config": "./supabase/functions/deno.json",
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.formatOnSave": true
+}
