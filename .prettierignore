@@ -1,0 +1,13 @@
+node_modules/
+pnpm-lock.yaml
+docs/
+supabase/config.toml
+supabase/.temp/
+supabase/.branches/
+supabase/functions/
+supabase/tests/functions/
+*.sql
+.env*
+.superpowers/
+/AGENTS.md
+.local/

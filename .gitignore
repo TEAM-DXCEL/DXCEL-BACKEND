@@ -1,0 +1,24 @@
+.DS_Store
+node_modules/
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.log
+supabase/.temp/
+supabase/.branches/
+.superpowers/
+docs/superpowers/
+/docs/server-integration.md
+/AGENTS.md
+.local/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Use pnpm exclusively
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock

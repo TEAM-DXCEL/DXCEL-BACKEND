@@ -1,0 +1,30 @@
+{
+  "name": "dxcel-backend",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=26.3.1 <27",
+    "pnpm": "10.34.9"
+  },
+  "packageManager": "pnpm@10.34.9",
+  "scripts": {
+    "supabase": "sh scripts/local-supabase.sh",
+    "db:start": "pnpm run supabase start --exclude vector",
+    "db:stop": "pnpm run supabase stop",
+    "db:status": "pnpm run supabase status",
+    "db:lint": "pnpm run supabase db lint --fail-on warning",
+    "db:test": "pnpm run supabase test db",
+    "functions:serve": "pnpm run supabase functions serve --env-file .env.local",
+    "lint": "deno lint --permit-no-files --config supabase/functions/deno.json",
+    "format": "prettier --write . && deno fmt --config supabase/functions/deno.json",
+    "format:check": "prettier --check . && deno fmt --check --config supabase/functions/deno.json",
+    "check": "pnpm run lint && pnpm run format:check && pnpm test",
+    "db:types": "sh scripts/generate-db-types.sh",
+    "test": "node --test scripts/*.test.mjs"
+  },
+  "devDependencies": {
+    "deno": "2.9.6",
+    "prettier": "3.9.10",
+    "supabase": "3.0.0"
+  }
+}
