@@ -9,6 +9,7 @@ supabase/.temp/
 supabase/.branches/
 .superpowers/
 docs/superpowers/
+/docs/server-integration.md
 /AGENTS.md
 .local/
 .venv/
@@ -16,4 +17,3 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
-/docs/server-integration.md
