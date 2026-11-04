@@ -4,21 +4,21 @@
   "private": true,
   "engines": {
     "node": ">=26.3.1 <27",
-    "npm": ">=11.16.0 <12"
+    "pnpm": "10.34.9"
   },
-  "packageManager": "npm@11.16.0",
+  "packageManager": "pnpm@10.34.9",
   "scripts": {
     "supabase": "sh scripts/local-supabase.sh",
-    "db:start": "npm run supabase -- start --exclude vector",
-    "db:stop": "npm run supabase -- stop",
-    "db:status": "npm run supabase -- status",
-    "db:lint": "npm run supabase -- db lint --fail-on warning",
-    "db:test": "npm run supabase -- test db",
-    "functions:serve": "npm run supabase -- functions serve --env-file .env.local",
+    "db:start": "pnpm run supabase start --exclude vector",
+    "db:stop": "pnpm run supabase stop",
+    "db:status": "pnpm run supabase status",
+    "db:lint": "pnpm run supabase db lint --fail-on warning",
+    "db:test": "pnpm run supabase test db",
+    "functions:serve": "pnpm run supabase functions serve --env-file .env.local",
     "lint": "deno lint --permit-no-files --config supabase/functions/deno.json",
     "format": "prettier --write . && deno fmt --config supabase/functions/deno.json",
     "format:check": "prettier --check . && deno fmt --check --config supabase/functions/deno.json",
-    "check": "npm run lint && npm run format:check && npm test",
+    "check": "pnpm run lint && pnpm run format:check && pnpm test",
     "db:types": "sh scripts/generate-db-types.sh",
     "test": "node --test scripts/*.test.mjs"
   },
@@ -26,8 +26,5 @@
     "deno": "2.9.6",
     "prettier": "3.9.10",
     "supabase": "3.0.0"
-  },
-  "allowScripts": {
-    "deno@2.9.6": true
   }
 }

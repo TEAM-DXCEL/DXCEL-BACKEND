@@ -17,3 +17,8 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
+
+# Use pnpm exclusively
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock
