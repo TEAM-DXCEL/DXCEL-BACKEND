@@ -9,5 +9,5 @@ supabase/tests/functions/
 *.sql
 .env*
 .superpowers/
-.local/
 /AGENTS.md
+.local/
