@@ -20,12 +20,12 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: npm
-      - run: npm install --global npm@11.16.0
-      - run: npm ci
-      - run: npm run check
-      - run: npm exec -- supabase --version
-      - run: npm exec -- deno --version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm exec supabase --version
+      - run: pnpm exec deno --version
