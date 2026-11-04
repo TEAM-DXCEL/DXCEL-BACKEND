@@ -8,12 +8,12 @@ node_modules/
 supabase/.temp/
 supabase/.branches/
 .superpowers/
+docs/superpowers/
 .local/
 .venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
-docs/superpowers/
 /docs/server-integration.md
 /AGENTS.md
