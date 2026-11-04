@@ -1,0 +1,13 @@
+node_modules/
+package-lock.json
+docs/
+supabase/config.toml
+supabase/.temp/
+supabase/.branches/
+supabase/functions/
+supabase/tests/functions/
+*.sql
+.env*
+.superpowers/
+.local/
+/AGENTS.md
