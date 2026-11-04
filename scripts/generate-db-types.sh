@@ -7,6 +7,6 @@ mkdir -p generated
 types_tmp=$(mktemp generated/database.types.ts.XXXXXX)
 trap 'rm -f "$types_tmp"' EXIT HUP INT TERM
 
-npm exec -- supabase gen types typescript --schema public > "$types_tmp"
+npm run --silent supabase -- gen types typescript --schema public > "$types_tmp"
 test -s "$types_tmp"
 mv "$types_tmp" generated/database.types.ts

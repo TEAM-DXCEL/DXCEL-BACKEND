@@ -8,18 +8,19 @@
   },
   "packageManager": "npm@11.16.0",
   "scripts": {
-    "supabase": "supabase",
-    "db:start": "supabase start --exclude vector",
-    "db:stop": "supabase stop",
-    "db:status": "supabase status",
-    "db:lint": "supabase db lint --fail-on warning",
-    "db:test": "supabase test db",
-    "functions:serve": "supabase functions serve --env-file .env.local",
+    "supabase": "sh scripts/local-supabase.sh",
+    "db:start": "npm run supabase -- start --exclude vector",
+    "db:stop": "npm run supabase -- stop",
+    "db:status": "npm run supabase -- status",
+    "db:lint": "npm run supabase -- db lint --fail-on warning",
+    "db:test": "npm run supabase -- test db",
+    "functions:serve": "npm run supabase -- functions serve --env-file .env.local",
     "lint": "deno lint --permit-no-files --config supabase/functions/deno.json",
     "format": "prettier --write . && deno fmt --config supabase/functions/deno.json",
     "format:check": "prettier --check . && deno fmt --check --config supabase/functions/deno.json",
-    "check": "npm run lint && npm run format:check",
-    "db:types": "sh scripts/generate-db-types.sh"
+    "check": "npm run lint && npm run format:check && npm test",
+    "db:types": "sh scripts/generate-db-types.sh",
+    "test": "node --test scripts/*.test.mjs"
   },
   "devDependencies": {
     "deno": "2.9.6",
