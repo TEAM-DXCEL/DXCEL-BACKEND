@@ -4,14 +4,14 @@
 
 ## 개발 환경
 
-- Node.js `26.3.1`, npm `11.16.0`
-- 프로젝트 로컬 Supabase CLI `3.0.0`, Deno `2.9.6` (npm 의존성으로 고정)
+- Node.js `26.3.1`, pnpm `10.34.9`
+- 프로젝트 로컬 Supabase CLI `3.0.0`, Deno `2.9.6` (pnpm 의존성으로 고정)
 - 로컬 DB/Edge Runtime 실행에는 Docker 호환 컨테이너 런타임이 필요합니다.
 
 ```bash
-npm ci
+pnpm install --frozen-lockfile
 cp .env.example .env.local
-npm run db:start
+pnpm db:start
 ```
 
 macOS에서는 Colima와 Docker CLI를 사용할 수 있습니다.
@@ -21,10 +21,10 @@ brew install colima docker
 colima start --cpu 2 --memory 4 --disk 20
 ```
 
-Colima 기동 후 `npm run db:start`를 실행합니다. 최초 기동 시 이미지 다운로드가 필요합니다.
+Colima 기동 후 `pnpm db:start`를 실행합니다. 최초 기동 시 이미지 다운로드가 필요합니다.
 CLI와 Deno를 전역으로 설치할 필요는 없습니다. Deno 편집기 설정은 Edge Functions 경로에만 적용합니다.
 
-개발을 마치면 `npm run db:stop`으로 데이터를 보존하며 중지할 수 있습니다.
+개발을 마치면 `pnpm db:stop`으로 데이터를 보존하며 중지할 수 있습니다.
 VM 자원까지 반환하려면 이어서 `colima stop`을 실행합니다. 다음 개발 때 Colima부터 다시 기동합니다.
 
 로컬 Supabase 명령은 현재 Docker context의 로컬 socket을 사용하고, 공개 이미지용 임시 익명 설정을 적용합니다.
@@ -33,18 +33,18 @@ TCP/SSH 원격 Docker daemon은 이 개발 명령에서 거부합니다. private
 
 ## 로컬 명령
 
-| 명령                                       | 용도                                                                        |
-| ------------------------------------------ | --------------------------------------------------------------------------- |
-| `npm run check`                            | 저장소 포맷·Deno 검사·로컬 실행 도구 테스트                                 |
-| `npm run format`                           | 저장소 설정·문서 및 Deno 소스 포맷                                          |
-| `npm run db:start`                         | 로컬 Supabase 시작                                                          |
-| `npm run db:status`                        | 로컬 접속 정보 확인. 출력의 관리자 키를 공유하지 않습니다                   |
-| `npm run db:stop`                          | 로컬 Supabase 중지·데이터 보존                                              |
-| `npm run db:lint`                          | 실행 중인 로컬 DB의 SQL 검사                                                |
-| `npm run db:test`                          | DB 테스트 추가 후 pgTAP 실행                                                |
-| `npm run db:types`                         | 로컬 public 스키마의 TypeScript 타입을 `generated/database.types.ts`로 생성 |
-| `npm run functions:serve`                  | 로컬 함수 추가 후 Edge Runtime 실행                                         |
-| `npm run supabase -- migration new <name>` | 새 migration 생성                                                           |
+| 명령                                 | 용도                                                                        |
+| ------------------------------------ | --------------------------------------------------------------------------- |
+| `pnpm check`                         | 저장소 포맷·Deno 검사·로컬 실행 도구 테스트                                 |
+| `pnpm format`                        | 저장소 설정·문서 및 Deno 소스 포맷                                          |
+| `pnpm db:start`                      | 로컬 Supabase 시작                                                          |
+| `pnpm db:status`                     | 로컬 접속 정보 확인. 출력의 관리자 키를 공유하지 않습니다                   |
+| `pnpm db:stop`                       | 로컬 Supabase 중지·데이터 보존                                              |
+| `pnpm db:lint`                       | 실행 중인 로컬 DB의 SQL 검사                                                |
+| `pnpm db:test`                       | DB 테스트 추가 후 pgTAP 실행                                                |
+| `pnpm db:types`                      | 로컬 public 스키마의 TypeScript 타입을 `generated/database.types.ts`로 생성 |
+| `pnpm functions:serve`               | 로컬 함수 추가 후 Edge Runtime 실행                                         |
+| `pnpm supabase migration new <name>` | 새 migration 생성                                                           |
 
 로컬 앱 API는 `http://127.0.0.1:54321`, Studio는 `http://127.0.0.1:54323`입니다.
 인증 redirect는 프론트의 `http://127.0.0.1:3000/auth/callback`을 기준으로 합니다.
@@ -78,7 +78,7 @@ Deno lint는 아직 소스가 없는 경우를 허용하며, 테스트 통과로
 
 ## 초기 세팅 검증
 
-- `npm ci`, 포맷·Deno 검사, 로컬 실행 도구 테스트 3건 통과
+- `pnpm install --frozen-lockfile`, 포맷·Deno 검사, 로컬 실행 도구 테스트 3건 통과
 - Colima/Docker 및 로컬 Supabase 기동, PostgreSQL 17.11 접속 확인
 - 인증 health·REST·Studio HTTP 200, 로컬 DB lint 오류 없음
 - DB 타입 생성 명령 확인. 빈 스키마의 임시 생성 파일은 제거하고 도메인 migration 이후 생성합니다
