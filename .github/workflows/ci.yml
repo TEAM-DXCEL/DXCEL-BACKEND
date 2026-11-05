@@ -3,7 +3,7 @@ name: Backend CI
 on:
   pull_request:
   push:
-    branches: [main, "codex/**"]
+    branches: [main, develop, "codex/**"]
 
 permissions:
   contents: read
@@ -29,3 +29,29 @@ jobs:
       - run: pnpm check
       - run: pnpm exec supabase --version
       - run: pnpm exec deno --version
+
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - run: pnpm db:start
+      - run: pnpm db:lint
+      - run: pnpm db:test
+      - run: pnpm db:verify
+      - run: pnpm db:types
+      - run: git diff --exit-code -- generated/database.types.ts
+      - if: always()
+        run: pnpm db:stop

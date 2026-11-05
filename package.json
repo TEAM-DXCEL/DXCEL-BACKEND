@@ -20,7 +20,8 @@
     "format:check": "prettier --check . && deno fmt --check --config supabase/functions/deno.json",
     "check": "pnpm run lint && pnpm run format:check && pnpm test",
     "db:types": "sh scripts/generate-db-types.sh",
-    "test": "node --test scripts/*.test.mjs"
+    "test": "node --test scripts/*.test.mjs",
+    "db:verify": "node scripts/verify-migrations.mjs"
   },
   "devDependencies": {
     "deno": "2.9.6",
