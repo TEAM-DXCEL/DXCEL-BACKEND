@@ -9,4 +9,5 @@ trap 'rm -f "$types_tmp"' EXIT HUP INT TERM
 
 pnpm --silent run supabase gen types typescript --schema public > "$types_tmp"
 test -s "$types_tmp"
+pnpm exec prettier --parser typescript --write "$types_tmp" >/dev/null
 mv "$types_tmp" generated/database.types.ts
