@@ -1000,6 +1000,15 @@ export type Database = {
         };
         Returns: undefined;
       };
+      issue_ingestion_token: {
+        Args: { p_expires_at: string; p_name: string; p_project: string };
+        Returns: {
+          expires_at: string;
+          token: string;
+          token_id: string;
+        }[];
+      };
+      read_comparison_run: { Args: { p_run_id: string }; Returns: Json };
       record_run: {
         Args: {
           p_attempt: number;
@@ -1015,6 +1024,22 @@ export type Database = {
           p_status: Database["public"]["Enums"]["run_status"];
         };
         Returns: string;
+      };
+      register_ingested_evaluation: {
+        Args: {
+          p_attempt: number;
+          p_finished_at: string;
+          p_generation_id: string;
+          p_generation_sha256: string;
+          p_group_id: string;
+          p_ingestion_id: string;
+          p_metrics: Json;
+          p_previous_run_id: string;
+          p_repetition: number;
+          p_started_at: string;
+          p_token: string;
+        };
+        Returns: Json;
       };
       revise_experiment: {
         Args: {
@@ -1038,6 +1063,7 @@ export type Database = {
         };
         Returns: number;
       };
+      revoke_ingestion_token: { Args: { p_project: string; p_token_id: string }; Returns: boolean };
       set_project_member: {
         Args: {
           p_project: string;

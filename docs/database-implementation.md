@@ -2,7 +2,7 @@
 
 ## 적용 범위
 
-19개 도메인 테이블과 enum 6개, 프로젝트별 SELECT RLS, 권한을 검사하는 DB RPC 13개, 확정 결과 집계 view를 구현했다. SQL 파일이 DB 구조의 원본이다. 원격 DB에는 적용하지 않는다.
+19개 도메인 테이블과 enum 6개, 프로젝트별 SELECT RLS, 권한을 검사하는 DB RPC 17개, 확정 결과 집계 view를 구현했다. SQL 파일이 DB 구조의 원본이다.
 
 | Migration | 내용 |
 | --- | --- |
@@ -11,6 +11,8 @@
 | `20261105122200_research_rpcs.sql` | 프로젝트·설계·결과 등록/확정·Baseline·노트 RPC와 집계 view |
 | `20261105122300_result_history.sql` | 대표 결과 변경 참조 이력·누락 지표 결측 보존·확정된 평가 보호 |
 | `20261105122400_audit_identifiers.sql` | 복합 대상의 감사 식별자와 작업별 감사 사유 분리 |
+| `20261110160000_evaluation_ingestion.sql` | 등록 토큰 발급·폐기와 평가 자동 등록 권한 |
+| `20261110180000_comparison_run_read.sql` | 등록된 실행의 비교 화면용 읽기 RPC |
 
 UUID 식별자와 `timestamptz`를 사용한다. 실험 번호는 프로젝트 내 유일하다. 연구 테이블의 삭제 cascade는 사용하지 않는다. 결과·설계 버전·노트 버전·Baseline 버전·비교 조건·지표 정의는 추가 방식으로 보존하며, 수정·삭제 trigger로 보호한다.
 
@@ -19,8 +21,8 @@ UUID 식별자와 `timestamptz`를 사용한다. 실험 번호는 프로젝트 �
 - 비회원은 도메인 테이블 및 RPC에 접근할 수 없다.
 - 구성원은 자신의 프로젝트만 조회한다. viewer는 쓰기를 할 수 없다.
 - owner/editor의 변경은 프로젝트 권한을 확인하는 RPC로만 수행한다. 구성원 변경은 owner만 가능하며 마지막 owner 제거·강등은 거부한다.
-- 클라이언트의 직접 INSERT/UPDATE/DELETE 권한은 없다. `service_role`에도 도메인 직접 쓰기나 RPC 실행 권한을 부여하지 않았다. 향후 수집 API의 권한 모델은 별도로 구현해야 한다.
-- 등록 토큰 테이블은 owner에게도 해시를 제외한 메타데이터 열만 조회 허용한다. 토큰 발급·폐기 RPC와 토큰 기반 등록 endpoint는 아직 없다.
+- 클라이언트의 직접 INSERT/UPDATE/DELETE 권한은 없다. `service_role`에도 도메인 직접 쓰기 권한을 부여하지 않았다. `service_role`에는 Edge Function의 자동 등록 RPC와 비교 화면 서버의 읽기 RPC 실행을 허용한다.
+- 등록 토큰 테이블은 owner에게도 해시를 제외한 메타데이터 열만 조회 허용한다. owner는 토큰을 발급·폐기할 수 있다. 자세한 요청·응답은 [자동 등록 계약](../contracts/evaluation-ingestion-v1.md)을 참고한다.
 - 보조 함수는 비노출 `private` 스키마에 둔다. 모든 SECURITY DEFINER 함수의 search_path를 고정하고, 기본 실행 권한을 회수한 뒤 필요한 함수만 명시적으로 허용한다.
 
 일반 변경은 프로젝트 행을 잠근 뒤 권한을 다시 확인한다. 같은 프로젝트의 쓰기는 직렬화되므로 소규모 협업의 정확성을 우선하며 쓰기 처리량이 필요해지면 잠금 범위를 재검토한다.
@@ -68,13 +70,13 @@ pnpm db:types
 pnpm check
 ```
 
-- pgTAP 60개: RLS·역할 승격·마지막 owner·프로젝트 간 FK·유한 수치·등록 멱등성/충돌·원자성·확정 불변성·지표 결측·비교 조건·같은 생성물 중복·노트 충돌·Baseline/대표 결과 이력·집계 검증. 테스트 기록은 transaction rollback으로 제거한다.
-- `db:verify`: loopback의 로컬 DB 포트 54322에만 접속하며 별도의 무작위 이름 임시 DB에서 migration 5개를 처음부터 적용한다. Supabase와 같은 역할이 존재하는 로컬 클러스터에서 최소 `auth.users`·`auth.uid()` fixture를 사용하므로 실제 Auth 전체를 재현하는 검증은 아니다. 실제 Auth 스키마와의 호환성은 실행 중인 Supabase의 pgTAP 테스트가 별도로 검증한다.
+- pgTAP: RLS·역할 승격·마지막 owner·프로젝트 간 FK·유한 수치·등록 멱등성/충돌·원자성·확정 불변성·지표 결측·비교 조건·같은 생성물 중복·노트 충돌·Baseline/대표 결과 이력·집계 검증. 테스트 기록은 transaction rollback으로 제거한다.
+- `db:verify`: loopback의 로컬 DB 포트 54322에만 접속하며 별도의 무작위 이름 임시 DB에서 migration 7개를 처음부터 적용한다. Supabase와 같은 역할이 존재하는 로컬 클러스터에서 최소 `auth.users`·`auth.uid()` fixture를 사용하므로 실제 Auth 전체를 재현하는 검증은 아니다. 실제 Auth 스키마와의 호환성은 실행 중인 Supabase의 pgTAP 테스트가 별도로 검증한다.
 - 임시 DB에서는 같은 등록의 동시 요청, 설계·노트 동시 편집, 두 owner의 동시 강등도 독립 연결로 검증한다. 실패하더라도 finally에서 해당 임시 DB만 삭제한다. 기존 로컬 데이터는 reset하지 않는다.
-- CI는 새 Supabase 스택에서 migration을 적용하고 SQL lint·pgTAP·재적용/동시성·생성 타입 차이를 검사한다. 아직 push하지 않았으므로 이번 변경의 GitHub CI 실행 결과는 없다.
+- CI는 새 Supabase 스택에서 migration을 적용하고 SQL lint·pgTAP·재적용/동시성·생성 타입 차이를 검사한다.
 
 ## 남은 연결 작업
 
-프론트는 아직 샘플 목록을 사용한다. 실제 조회 adapter·프로젝트 범위 cursor pagination·로그인 연결, 등록 토큰 발급/인증과 HTTP 수집 API, 실행 상태 전이, 보관 상태 변경 UI, 원격 배포와 백업/복원 운영 절차는 별도 작업이다. 이 migration이 HTTP 입력 검증이나 운영 백업을 대신하지 않는다.
+프론트 개발 서버는 비공개 Supabase Storage에서 기존 기록을 읽고, 읽기 RPC로 지정된 등록 실행을 조회한다. 프로젝트별 실행 목록 조회, 로그인 연결, 업로더 자동 실행, 실행 상태 전이, 보관 상태 변경 UI 및 백업·복원 운영 절차는 별도 작업이다.
 
 참고한 공식 문서: [Supabase 함수 권한](https://supabase.com/docs/guides/database/functions), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [Postgres row security와 FK](https://www.postgresql.org/docs/current/ddl-rowsecurity.html).
