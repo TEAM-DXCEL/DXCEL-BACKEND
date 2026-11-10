@@ -1008,6 +1008,7 @@ export type Database = {
           token_id: string;
         }[];
       };
+      read_comparison_run: { Args: { p_run_id: string }; Returns: Json };
       record_run: {
         Args: {
           p_attempt: number;
