@@ -1009,6 +1009,7 @@ export type Database = {
         }[];
       };
       read_comparison_run: { Args: { p_run_id: string }; Returns: Json };
+      read_selected_evaluations: { Args: Record<PropertyKey, never>; Returns: Json[] };
       record_run: {
         Args: {
           p_attempt: number;
